@@ -12,18 +12,10 @@ import CanvasDock from "@/components/canvas/CanvasDock";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import LoadingSpinner from "@/components/LoadingSpinner";
 
 export const formSchema = z.object({
   prompt: z.string(),
 });
-
-export type ResultType = {
-  expr: string;
-  result: number | Record<string, number>; // can be a simple number or an object like { x: 3.5, "2x": 7 }
-  assign?: boolean; // optional because not all results will have this
-};
-
 
 const Page = () => {
   const canvasRef = useRef<ReactSketchCanvasRef>(null);
@@ -33,15 +25,11 @@ const Page = () => {
   const [penWidth, setPenWidth] = useState(5);
   const [eraserWidth, setEraserWidth] = useState(10);
 
-  const [result, setResult] = useState<ResultType[]>([]);
-  const [loading, setLoading] = useState(false)
-
-
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: { prompt: "" },
   });
-
+  
 
   return (
     <div className="w-full h-screen flex flex-col">
@@ -63,25 +51,13 @@ const Page = () => {
           setPenWidth={setPenWidth}
           setStrokeColor={setStrokeColor}
           strokeColor={strokeColor}
-          form={form}
-          // result={result}
-          setResult={setResult}
-          setLoading ={setLoading}
-
-
-        />
-
-        <CanvasDock
-          form={form}
-          canvasRef={canvasRef}
-          result={result}
-          setResult={setResult}
-          setLoading ={setLoading}
+          form = {form}
           
         />
+
+        <CanvasDock form={form} canvasRef={canvasRef} />
       </div>
 
-      {loading && <LoadingSpinner />}
 
     </div>
   );
